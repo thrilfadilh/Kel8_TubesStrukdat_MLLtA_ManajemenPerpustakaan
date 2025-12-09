@@ -1,0 +1,117 @@
+#include "list_buku.h"
+#include <iostream>
+using namespace std;
+
+void createList(List_buku &L) {
+    L.first = NULL;
+}
+
+address_buku alokasi(Buku x) {
+    address_buku P = new elmlist_buku;
+    P->info = x;
+    P->next = NULL;
+    createList(P->relasi);
+    return P;
+}
+
+void dealokasi(address_buku &P) {
+    if (P) {
+
+        address_peminjaman R = P->relasi.first;
+        while (R != NULL) {
+            address_peminjaman nextR = R->next;
+            dealokasi(R);
+            R = nextR;
+        }
+        delete P;
+        P = NULL;
+    }
+}
+
+void insertFirst(List_buku &L, address_buku P) {
+    if (L.first == NULL) {
+        L.first = P;
+        P->next = P;
+    } else {
+        address_buku Q = L.first;
+        while (Q->next != L.first) Q = Q->next;
+        P->next = L.first;
+        Q->next = P;
+        L.first = P;
+    }
+}
+
+void insertLast(List_buku &L, address_buku P) {
+    if (L.first == NULL) {
+        insertFirst(L, P);
+    } else {
+        address_buku Q = L.first;
+        while (Q->next != L.first) Q = Q->next;
+        Q->next = P;
+        P->next = L.first;
+    }
+}
+
+address_buku findElm(List_buku L, int idBuku) {
+    if (L.first == NULL) return NULL;
+    address_buku P = L.first;
+    do {
+        if (P->info.ID_Buku == idBuku) return P;
+        P = P->next;
+    } while (P != L.first);
+    return NULL;
+}
+
+void printInfo(List_buku L) {
+    if (L.first == NULL) {
+        cout << "[List Buku kosong]" << endl;
+        return;
+    }
+    address_buku P = L.first;
+    int idx = 1;
+    do {
+        cout << "[" << idx++ << "] ID: " << P->info.ID_Buku
+             << " | Judul: " << P->info.Judul
+             << " | Stok: " << P->info.Stok << endl;
+        printInfo(P->relasi);
+        P = P->next;
+    } while (P != L.first);
+}
+
+bool deleteByID(List_buku &L, int idBuku) {
+    if (L.first == NULL) return false;
+
+    address_buku P = L.first;
+    address_buku prev = NULL;
+
+    do {
+        if (P->info.ID_Buku == idBuku) break;
+        prev = P;
+        P = P->next;
+    } while (P != L.first);
+
+    if (P->info.ID_Buku != idBuku) return false;
+
+    if (P == L.first && P->next == L.first) {
+        L.first = NULL;
+        dealokasi(P);
+        return true;
+    }
+
+    if (P == L.first) {
+        address_buku last = L.first;
+        while (last->next != L.first) last = last->next;
+        L.first = P->next;
+        last->next = L.first;
+        dealokasi(P);
+        return true;
+    }
+
+    if (prev != NULL) {
+        prev->next = P->next;
+        dealokasi(P);
+        return true;
+    }
+
+    return false;
+}
