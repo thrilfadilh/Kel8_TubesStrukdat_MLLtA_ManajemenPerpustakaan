@@ -4,44 +4,137 @@ void createList(ListPeminjaman &L) {
     L.first = NULL;
 }
 
-Peminjaman* alokasiPeminjaman(string id, string tanggal) {
-    Peminjaman *p = new Peminjaman;
-    p->idPeminjaman = id;
-    p->tanggal = tanggal;
-    p->next = NULL;
-    return p;
+adrPeminjaman alokasiPeminjaman(string id, string tPinjam, string tKembali, float denda) {
+    adrPeminjaman P = new elmPeminjaman;
+    P->info.idPeminjaman = id;
+    P->info.tanggalPinjam = tPinjam;
+    P->info.tanggalKembali = tKembali;
+    P->info.denda = denda;
+    P->next = NULL;
+    return P;
 }
 
-void insertLast(ListPeminjaman &L, Peminjaman* p) {
+void insertLastPeminjaman(ListPeminjaman &L, adrPeminjaman P) {
     if (L.first == NULL) {
-        L.first = p;
+        L.first = P;
     } else {
-        Peminjaman *q = L.first;
-        while (q->next != NULL) q = q->next;
-        q->next = p;
+        adrPeminjaman Q = L.first;
+        while (Q->next != NULL) {
+            Q = Q->next;
+        }
+        Q->next = P;
     }
 }
 
-Peminjaman* findPeminjaman(ListPeminjaman L, string id) {
-    Peminjaman *p = L.first;
-    while (p != NULL) {
-        if (p->idPeminjaman == id) return p;
-        p = p->next;
+adrPeminjaman findPeminjaman(ListPeminjaman L, string id) {
+    adrPeminjaman P = L.first;
+    while (P != NULL) {
+        if (P->info.idPeminjaman == id) {
+            return P;
+        }
+        P = P->next;
     }
     return NULL;
 }
 
-void printInfo(ListPeminjaman L) {
-    cout << "\n=== LIST PEMINJAMAN (CHILD) ===\n";
+void deletePeminjaman(ListPeminjaman &LP, adrPeminjaman p) {
+    if (LP.first == NULL || p == NULL) return;
+    if (LP.first == p) {
+        LP.first = LP.first->next;
+        delete p;
+        return;
+    }
+    adrPeminjaman prev = LP.first;
+    while (prev->next != NULL && prev->next != p) prev = prev->next;
+    if (prev->next == p) {
+        prev->next = p->next;
+        delete p;
+    }
+}
+
+void showAllPeminjaman(ListPeminjaman L) {
     if (L.first == NULL) {
-        cout << "Kosong\n";
+        cout << "List Peminjaman kosong.\n";
         return;
     }
 
-    Peminjaman *p = L.first;
+    adrPeminjaman p = L.first;
     while (p != NULL) {
-        cout << "- ID: " << p->idPeminjaman
-             << " | Tanggal: " << p->tanggal << endl;
+        cout << "- ID: " << p->info.idPeminjaman
+             << ", Tanggal Pinjam: " << p->info.tanggalPinjam
+             << ", Tanggal Kembali: " << p->info.tanggalKembali
+             << ", Denda: " << p->info.denda << endl;
         p = p->next;
+    }
+}
+
+void showChildDariParentBuku(Buku *b) {
+    cout << "Data peminjaman untuk Buku: " << b->judul << endl;
+
+    RelasiBuku *r = b->relasi;
+    if (r == NULL) {
+        cout << "(Tidak ada peminjaman)\n";
+        return;
+    }
+    while (r != NULL) {
+        cout << "- ID Peminjaman: " << r->child->info.idPeminjaman << endl;
+        r = r->next;
+    }
+}
+
+void showChildDariParentAnggota(Anggota *a) {
+    cout << "Data peminjaman untuk Anggota: " << a->nama << endl;
+
+    RelasiAnggota *r = a->relasi;
+    if (r == NULL) {
+        cout << "(Tidak ada peminjaman)\n";
+        return;
+    }
+    while (r != NULL) {
+        cout << "- ID Peminjaman: " << r->child->info.idPeminjaman << endl;
+        r = r->next;
+    }
+}
+
+void showParentBukuDariChild(ListBuku LB, adrPeminjaman c) {
+    Buku *b = LB.first;
+    if (b == NULL) return;
+
+    bool found = false;
+    do {
+        RelasiBuku *r = b->relasi;
+        while (r != NULL) {
+            if (r->child == c) {
+                cout << "- Buku: " << b->judul << endl;
+                found = true;
+            }
+            r = r->next;
+        }
+        b = b->next;
+    } while (b != LB.first);
+
+    if (!found) {
+        cout << "Child tidak berelasi dengan buku manapun.\n";
+    }
+}
+
+void showParentAnggotaDariChild(ListAnggota LA, adrPeminjaman c) {
+    Anggota *a = LA.first;
+    if (a == NULL) return;
+
+    bool found = false;
+    while (a != NULL) {
+        RelasiAnggota *r = a->relasi;
+        while (r != NULL) {
+            if (r->child == c) {
+                cout << "- Anggota: " << a->nama << endl;
+                found = true;
+            }
+            r = r->next;
+        }
+        a = a->next;
+    }
+    if (!found) {
+        cout << "Child tidak berelasi dengan anggota manapun.\n";
     }
 }
