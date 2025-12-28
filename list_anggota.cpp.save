@@ -1,0 +1,35 @@
+#ifndef LIST_PEMINJAMAN_H
+#define LIST_PEMINJAMAN_H
+
+#include <string>
+using namespace std;
+
+/* Full definition of child (peminjaman) */
+struct elmPeminjaman {
+    string idPeminjaman;
+    string tglPinjam;
+    string tglKembali;
+    float denda;
+    elmPeminjaman *next;
+};
+
+typedef elmPeminjaman* adrPeminjaman;
+
+struct ListPeminjaman {
+    adrPeminjaman first;
+};
+
+// child ops
+void createList(ListPeminjaman &L);
+adrPeminjaman alokasiPeminjaman(const string &id, const string &p, const string &k, float d);
+void insertLastPeminjaman(ListPeminjaman &L, adrPeminjaman p);
+adrPeminjaman findPeminjaman(ListPeminjaman L, const string &id);
+bool deletePeminjaman(ListPeminjaman &L, const string &id); // removes child and relations in parents
+void printInfo(ListPeminjaman L);
+
+// reporting and counts
+void printAllChildrenWithParents(/*ListBuku*/ void* dummyBuku, /*ListAnggota*/ void* dummyAnggota, ListPeminjaman LP);
+int countRelationsFromChild(/*ListBuku*/ void* dummyBuku, /*ListAnggota*/ void* dummyAnggota, adrPeminjaman child);
+int countChildrenWithoutRelations(/*ListBuku*/ void* dummyBuku, /*ListAnggota*/ void* dummyAnggota, ListPeminjaman LP);
+
+#endif

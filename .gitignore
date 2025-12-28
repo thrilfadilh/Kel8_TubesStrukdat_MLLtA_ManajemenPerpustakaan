@@ -1,0 +1,8 @@
+app
+*.o
+obj/
+bin/
+.DS_Store
+*.save
+*.layout.save
+*.cbp.save

@@ -1,24 +1,28 @@
 #ifndef LIST_PEMINJAMAN_H
 #define LIST_PEMINJAMAN_H
 
-#include <iostream>
 #include <string>
 using namespace std;
 
-struct Peminjaman {
+struct elmPeminjaman {
     string idPeminjaman;
-    string tanggal;
-    Peminjaman *next;
+    string tanggalPinjam;
+    string tanggalKembali;
+    float denda;
+    elmPeminjaman *next;
 };
 
+typedef elmPeminjaman* adrPeminjaman;
+
 struct ListPeminjaman {
-    Peminjaman *first;
+    adrPeminjaman first;
 };
 
 void createList(ListPeminjaman &L);
-Peminjaman* alokasiPeminjaman(string id, string tanggal);
-void insertLast(ListPeminjaman &L, Peminjaman* p);
-Peminjaman* findPeminjaman(ListPeminjaman L, string id);
+adrPeminjaman alokasiPeminjaman(string id, string pinjam, string kembali, float denda);
+void insertLastPeminjaman(ListPeminjaman &L, adrPeminjaman p);
+adrPeminjaman findPeminjaman(ListPeminjaman L, string id);
+void deletePeminjaman(ListPeminjaman &L, string id);
 void printInfo(ListPeminjaman L);
 
 #endif

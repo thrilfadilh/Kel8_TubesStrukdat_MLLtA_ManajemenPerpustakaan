@@ -1,6 +1,48 @@
-#ifndef LIST_BUKU_H_INCLUDED
-#define LIST_BUKU_H_INCLUDED
+#ifndef LIST_BUKU_H
+#define LIST_BUKU_H
+
+#include <string>
+using namespace std;
+
+/* forward declaration of elmPeminjaman so headers don't require full definition */
+struct elmPeminjaman;
+typedef elmPeminjaman* adrPeminjaman;
+
+struct RelasiBuku {
+    adrPeminjaman child;
+    RelasiBuku *next;
+};
+
+struct Buku {
+    string idBuku;
+    string judul;
+    string penulis;
+    RelasiBuku *relasi; 
+    Buku *next; 
+};
+
+struct ListBuku {
+    Buku *first;
+};
 
 
+void createList(ListBuku &L);
+Buku* alokasiBuku(const string &id, const string &judul, const string &penulis);
+void insertLast(ListBuku &L, Buku *p);
+Buku* findBuku(ListBuku L, const string &id);
+bool deleteBuku(ListBuku &L, const string &id); 
+void printInfo(ListBuku L);
 
-#endif // LIST_BUKU_H_INCLUDED
+// relation ops (on parent side)
+void tambahRelasiBuku(Buku *parent, adrPeminjaman child);
+bool deleteRelationBuku(Buku *parent, adrPeminjaman child); 
+bool findRelationBuku(Buku *parent, adrPeminjaman child);
+int countRelationsFromParent(Buku *parent);
+bool editRelationBuku(Buku *parent, adrPeminjaman oldChild, adrPeminjaman newChild);
+
+// reporting
+void printChildFromParent(ListBuku L, const string &idBuku);
+void printAllParentsWithChildren(ListBuku L);
+void printParentsFromChild(ListBuku L, /*ListAnggota will be used in implementation file*/ void* dummy, const string &idPeminjaman);
+
+#endif

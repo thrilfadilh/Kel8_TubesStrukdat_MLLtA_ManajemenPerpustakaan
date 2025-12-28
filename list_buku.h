@@ -5,10 +5,11 @@
 #include <string>
 using namespace std;
 
-struct Peminjaman;
+struct elmPeminjaman;
+typedef elmPeminjaman* adrPeminjaman;
 
 struct RelasiBuku {
-    Peminjaman *child;
+    adrPeminjaman child;
     RelasiBuku *next;
 };
 
@@ -17,8 +18,8 @@ struct Buku {
     string judul;
     string penulis;
 
-    RelasiBuku *relasi; // Relasi Tipe A
-    Buku *next;         // CSLL
+    RelasiBuku *relasi;
+    Buku *next;
 };
 
 struct ListBuku {
@@ -27,8 +28,15 @@ struct ListBuku {
 
 void createList(ListBuku &L);
 Buku* alokasiBuku(string id, string judul, string penulis);
-void insertLast(ListBuku &L, Buku* p);
+void insertLast(ListBuku &L, Buku *p);
 Buku* findBuku(ListBuku L, string id);
+void deleteBuku(ListBuku &L, string id);
 void printInfo(ListBuku L);
+
+void showRelasiBuku(Buku *parent);
+int countRelasiBuku(Buku *parent);
+
+void tambahRelasiBuku(Buku *parent, adrPeminjaman child);
+void hapusRelasiBuku(Buku *parent, adrPeminjaman child);
 
 #endif
